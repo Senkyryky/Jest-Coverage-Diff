@@ -5,6 +5,8 @@ import fs from 'fs'
 import {CoverageReport} from './Model/CoverageReport'
 import {DiffChecker} from './DiffChecker'
 
+const COVERAGE_SUMMARY_PATH = 'coverage/coverage-summary.json';
+
 async function run(): Promise<void> {
   try {
     const repoName = github.context.repo.repo
@@ -19,14 +21,14 @@ async function run(): Promise<void> {
     const branchNameHead = github.context.payload.pull_request?.head.ref
     execSync(commandToRun)
     const codeCoverageNew = <CoverageReport>(
-      JSON.parse(fs.readFileSync('coverage-summary.json').toString())
+      JSON.parse(fs.readFileSync(COVERAGE_SUMMARY_PATH).toString())
     )
     execSync('/usr/bin/git fetch')
     execSync('/usr/bin/git stash')
     execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
     execSync(commandToRun)
     const codeCoverageOld = <CoverageReport>(
-      JSON.parse(fs.readFileSync('coverage-summary.json').toString())
+      JSON.parse(fs.readFileSync(COVERAGE_SUMMARY_PATH).toString())
     )
     const currentDirectory = execSync('pwd')
       .toString()
